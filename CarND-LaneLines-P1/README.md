@@ -59,7 +59,7 @@ The process of function, draw_lines is shown as follows:
 
 ### 2. Potential shortcomings
 
-* 1. The final line finding depends on the cropped region, which should be adpative to different kind of videos. When the scenes change, the vertices for cropping may not working. 
+* 1. The final line finding depends on the cropped region, which should be adpative to different kind of videos. When the scenes change, the vertices for cropping may not work. 
 
 * 2. The pipleline fails for some frames in challenge video. In such cases, straight line may not be a good choice and it is not robust engouh. 
 
