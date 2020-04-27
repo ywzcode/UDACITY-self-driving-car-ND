@@ -18,10 +18,10 @@ All dependecies are included in CarND conda enviroment. Please check and install
 
 ### 1. Project Pipeline
 
-This part the pipeline for detecting lanelines of one single image token from the car camera.
+This part is the pipeline for detecting lanelines of one single image token from the car camera.
 The general process is:
 
-* 1. As our goal is to detect the lanelines whose colors are either white or yellow, we convert the RGB image to HSL image to isolate the white and yellow part of the image. The introduction of HSL color space can be found on [Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV). Thus, an image only with white and yellow is obtained.
+* 1. As our goal is to detect the lanelines whose colors are either white or yellow, we convert the RGB image to HSL color space to isolate the white and yellow part of the image. The introduction of HSL color space can be found on [Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV). Thus, an image with only white and yellow part is obtained.
 
 <img src="./figures-example/ori_hsl.png" width="960" alt="Combined Image" />
 
@@ -33,26 +33,25 @@ The general process is:
 
 * 4. To detect the edges, the Canny operator is conducted. 
 
-* 5. Based on the detected edges, we're only interested in specific region. Thus, it is necessary to crop the region of interest in order to eliminate the noise for fitting the lanelines.
+* 5. Based on the detected edges, we're only interested in the specific region. Thus, it is necessary to crop the region of interest in order to eliminate the noise for fitting the lanelines.
 
 <img src="./figures-example/canny-crop.png" width = "960" alt="Combined Image"/>
 
 * 6. Then, Hough transformation is used to get the line segments. Details of Hough transformation can be found at [Wikipedia](https://en.wikipedia.org/wiki/Hough_transform).
 
-* 7. In this stage, we only have several line segments which are not a solid full lane. So, we extrapolate them to get the full
-    extent of the lane. The process of function, draw_lines is shown as follows:
+* 7. In this stage, we only have several line segments which are not a solid full lane. So, we extrapolate them to get the full extent of the lane. The process of function, draw_lines is shown as follows:
     
-    **1. Enumerate all line segments, the slope of each line is computed accordingly. If x2 == x1, the line is vertical and should be discarded. Also, there are some horizontal lines which can disturb the final estimation, we disard such cases via condition abs(slope) > 0.1. 
+    1. Enumerate all line segments, the slope of each line is computed accordingly. If x2 == x1, the line is vertical and should be discarded. Also, there are some horizontal lines which can disturb the final estimation, we disard such cases via condition abs(slope) > 0.1. 
     
-    **2. Save all negative and positive slope lines corrdinates, seperately. 
+    2. Save all negative and positive slope lines corrdinates, seperately. 
     
-    **3. Fitting two lines with np.polyfit and corresponding coordinates. (w, intercept) = np.polyfit(data)
+    3. Fit two lines with np.polyfit (order = 1) and corresponding coordinates. (w, intercept) = np.polyfit(data)
     
-    **4. Find the minimal and maximal y coordinates.
+    4. Find the minimal and maximal y coordinates.
     
-    **5. Then, the x coordinates can be computed via (y - intercept) / w for two lines (negative and positive slopes).
+    5. Then, the x coordinates can be computed via (y - intercept) / w for two lines (negative and positive slopes).
     
-    **6. Draw the lanelines according to the top and bottom coordinates of two lines. 
+    6. Draw the lanelines according to the top and bottom coordinates of two lines. 
     
 ![T1P1](./figures-example/gif.gif)
 
