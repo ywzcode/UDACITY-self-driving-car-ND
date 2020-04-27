@@ -11,24 +11,64 @@ When we drive, we use our eyes to decide where to go.  The lines on the road tha
 In this project you will detect lane lines in images using Python and OpenCV.  OpenCV means "Open-Source Computer Vision", which is a package that has many useful tools for analyzing images.  
 
 ## Dependencies
----
 
-All dependecies are included in CarND conda enviroment. If you have already installed the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit) you should be good to go!   If not, you should install the starter kit to get started on this project. ##
+All dependecies are included in CarND conda enviroment. Please check and install [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit) if you have problem to run the code. 
 
-**Step 1:** Set up the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) if you haven't already.
+## Reflection
 
-**Step 2:** Open the code in a Jupyter Notebook
+### 1. Project Pipeline
 
-You will complete the project code in a Jupyter notebook.  If you are unfamiliar with Jupyter Notebooks, check out [Udacity's free course on Anaconda and Jupyter Notebooks](https://classroom.udacity.com/courses/ud1111) to get started.
+This part the pipeline for detecting lanelines of one single image token from the car camera.
+The general process is:
 
-Jupyter is an Ipython notebook where you can run blocks of code and see results interactively.  All the code for this project is contained in a Jupyter notebook. To start Jupyter in your browser, use terminal to navigate to your project directory and then run the following command at the terminal prompt (be sure you've activated your Python 3 carnd-term1 environment as described in the [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) installation instructions!):
+*1. As our goal is to detect the lanelines whose colors are either white or yellow, we convert the RGB image to HSL image to isolate the white and yellow part of the image. The introduction of HSL color space can be found on [Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV). Thus, an image only with white and yellow is obtained.
+<img src="figures-example/ori-hsv.png" width="480" alt="Combined Image" />
 
-`> jupyter notebook`
+*2. The masked image is converted to gray scale for further processing. 
 
-A browser window will appear showing the contents of the current directory.  Click on the file called "P1.ipynb".  Another browser window will appear displaying the notebook.  Follow the instructions in the notebook to complete the project.  
+*3. Gaussian kernel is operated over image to blur the gray-scale image. 
+<img src="figures-example/hsv_gaussian.png", width = "480", alt="Combined Image"/>
 
-**Step 3:** Complete the project and submit both the Ipython notebook and the project writeup
+*4. To detect the edges, the Canny operator is conducted. 
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+*5. Based on the detected edges, we're only interested in specific region. Thus, it is necessary to crop the region of interest in order to eliminate the noise for fitting the lanelines.
+
+<img src="figures-example/canny-crop.png", width = "480", alt="Combined Image"/>
+
+*6. Then, Hough transformation is used to get the line segments. Details of Hough transformation can be found at [Wikipedia](https://en.wikipedia.org/wiki/Hough_transform).
+
+*7. In this stage, we only have several line segments which are not a solid full lane. So, we extrapolate them to get the full
+    extent of the lane. The process of function, draw_lines is shown as follows:
+    
+    **1. Enumerate all line segments, the slope of each line is computed accordingly. If x2 == x1, the line is vertical and should be discarded. Also, there are some horizontal lines which can disturb the final estimation, we disard such cases via condition abs(slope) > 0.1. 
+    
+    **2. Save all negative and positive slope lines corrdinates, seperately. 
+    
+    **3. Fittly two lines with np.polyfit and corresponding coordinates. (w, intercept) = np.polyfit(data)
+    
+    **4. Find the minimal and maximal y coordinate.
+    
+    **5. Then, the x coordinates can be computed via (y - intercept) / w for two lines (negative and positive slopes).
+    
+    **6. Draw the lanelines according to the top and bottom coordinates of two lines. 
+    
+### 2. Potential shortcomings
+
+*1. The final line finding depends on the cropped region, which should be adpative to different kind of videos. When the scenes change, the vertices for cropping may not working. 
+
+*2. The pipleline fails for some frames in challenge video. In such cases, straight line may not be a good choice and it is not robust engouh. 
+
+*3. Also, the pipeline does not consider the temporal relationship, which is also the reason why it is so sensitive regarding direction changes in challenge video.
+
+
+### 3. Possible improvements.
+
+*1. Use [generalized hough transform](https://en.wikipedia.org/wiki/Generalised_Hough_transform) insead of using hough line transformation for making the line detection more robust. 
+
+*2. Use [RANSAC](https://en.wikipedia.org/wiki/Random_sample_consensus) for fitting the line. 
+
+*3. Add temporal constraints to make the detection temporally smooth.
+
+*4. Use Machine Learning and Deep Learning methods to achieve line detection. 
+
 
