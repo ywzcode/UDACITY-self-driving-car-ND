@@ -41,17 +41,17 @@ The general process is:
 
 * 7. In this stage, we only have several line segments which are not a solid full lane. So, we extrapolate them to get the full extent of the lane. The process of function, draw_lines is shown as follows:
     
-    1. Enumerate all line segments, the slope of each line is computed accordingly. If x2 == x1, the line is vertical and should be discarded. Also, there are some horizontal lines which can disturb the final estimation, we disard such cases via condition abs(slope) > 0.1. 
+    *1. Enumerate all line segments, the slope of each line is computed accordingly. If x2 == x1, the line is vertical and should be discarded. Also, there are some horizontal lines which can disturb the final estimation, we disard such cases via condition abs(slope) > 0.1. 
     
-    2. Save all negative and positive slope lines corrdinates, seperately. 
+    *2. Save all negative and positive slope lines corrdinates, seperately. 
     
-    3. Fit two lines with np.polyfit (order = 1) and corresponding coordinates. (w, intercept) = np.polyfit(data)
+    *3. Fit two lines with np.polyfit (order = 1) and corresponding coordinates. (w, intercept) = np.polyfit(data)
     
-    4. Find the minimal and maximal y coordinates.
+    *4. Find the minimal and maximal y coordinates.
     
-    5. Then, the x coordinates can be computed via (y - intercept) / w for two lines (negative and positive slopes).
+    *5. Then, the x coordinates can be computed via (y - intercept) / w for two lines (negative and positive slopes).
     
-    6. Draw the lanelines according to the top and bottom coordinates of two lines. 
+    *6. Draw the lanelines according to the top and bottom coordinates of two lines. 
     
 ![T1P1](./figures-example/gif.gif)
 
