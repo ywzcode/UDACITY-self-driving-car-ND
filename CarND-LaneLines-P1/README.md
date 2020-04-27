@@ -22,18 +22,18 @@ This part the pipeline for detecting lanelines of one single image token from th
 The general process is:
 
 * 1. As our goal is to detect the lanelines whose colors are either white or yellow, we convert the RGB image to HSL image to isolate the white and yellow part of the image. The introduction of HSL color space can be found on [Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV). Thus, an image only with white and yellow is obtained.
-<img src="./figures-example/ori-hsv.png" width="480" alt="Combined Image" />
+<img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/ori-hsv.png" width="480" alt="Combined Image" />
 
 * 2. The masked image is converted to gray scale for further processing. 
 
 * 3. Gaussian kernel is operated over image to blur the gray-scale image. 
-<img src="./figures-example/hsv_gaussian.png", width = "480", alt="Combined Image"/>
+<img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/hsv_gaussian.png", width = "480", alt="Combined Image"/>
 
 * 4. To detect the edges, the Canny operator is conducted. 
 
 * 5. Based on the detected edges, we're only interested in specific region. Thus, it is necessary to crop the region of interest in order to eliminate the noise for fitting the lanelines.
 
-<img src="./figures-example/canny-crop.png", width = "480", alt="Combined Image"/>
+<img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/canny-crop.png", width = "480", alt="Combined Image"/>
 
 * 6. Then, Hough transformation is used to get the line segments. Details of Hough transformation can be found at [Wikipedia](https://en.wikipedia.org/wiki/Hough_transform).
 
@@ -52,7 +52,7 @@ The general process is:
     
     ** 6. Draw the lanelines according to the top and bottom coordinates of two lines. 
     
-<img src="./figures-example/gif.gif", width = "480", alt="Combined Image"/>
+<img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/gif.gif", width = "480", alt="Combined Image"/>
 ### 2. Potential shortcomings
 
 * 1. The final line finding depends on the cropped region, which should be adpative to different kind of videos. When the scenes change, the vertices for cropping may not working. 
