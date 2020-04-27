@@ -53,7 +53,7 @@ The general process is:
     
     ** 6. Draw the lanelines according to the top and bottom coordinates of two lines. 
     
-<img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/gif.gif",width = "480", alt="Combined Image"/>
+![T1P1](./figures-example/gif.gif)
 
 ### 2. Potential shortcomings
 
