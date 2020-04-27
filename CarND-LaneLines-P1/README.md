@@ -22,6 +22,7 @@ This part the pipeline for detecting lanelines of one single image token from th
 The general process is:
 
 * 1. As our goal is to detect the lanelines whose colors are either white or yellow, we convert the RGB image to HSL image to isolate the white and yellow part of the image. The introduction of HSL color space can be found on [Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV). Thus, an image only with white and yellow is obtained.
+
 <img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/ori-hsv.png" width="480" alt="Combined Image" />
 
 * 2. The masked image is converted to gray scale for further processing. 
@@ -44,15 +45,16 @@ The general process is:
     
     ** 2. Save all negative and positive slope lines corrdinates, seperately. 
     
-    ** 3. Fittly two lines with np.polyfit and corresponding coordinates. (w, intercept) = np.polyfit(data)
+    ** 3. Fitting two lines with np.polyfit and corresponding coordinates. (w, intercept) = np.polyfit(data)
     
-    ** 4. Find the minimal and maximal y coordinate.
+    ** 4. Find the minimal and maximal y coordinates.
     
     ** 5. Then, the x coordinates can be computed via (y - intercept) / w for two lines (negative and positive slopes).
     
     ** 6. Draw the lanelines according to the top and bottom coordinates of two lines. 
     
-<img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/gif.gif", width = "480", alt="Combined Image"/>
+<img src="https://github.com/ywzcode/UDACITY-self-driving-car-ND/tree/master/CarND-LaneLines-P1/figures-example/gif.gif",width = "480", alt="Combined Image"/>
+
 ### 2. Potential shortcomings
 
 * 1. The final line finding depends on the cropped region, which should be adpative to different kind of videos. When the scenes change, the vertices for cropping may not working. 
