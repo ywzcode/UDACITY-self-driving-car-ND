@@ -24,7 +24,7 @@ The goals / steps of this project are the following:
 [image3]: ./output_images/segment.png "Binary Example"
 [image4]: ./output_images/bird_eye_example.png "Warp Example"
 [image5]: ./output_images/color_fit_lines.jpg "Fit Visual"
-[image6]: ./output_images/example_output.jpg "Output"
+[image6]: ./output_images/example.png "Output"
 [video1]: ./project_video.mp4 "Video"
 
 
@@ -78,17 +78,30 @@ I verified that my perspective transform was working as expected by drawing the 
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
-
-![alt text][image5]
+In cell 15 of my IPython notebook, I defined `find_lane_pixels()` and `search_around_poly()`. `find_lane_pixels` is used if there were no line fitted yet, while `search_around_poly()` is used if we know the line of previous frame.
+```python
+Input: segmented and filtered image
+1. Take the histogram of input to obtain two peaks positions (left and right).
+2. Use sliding windows moving upward in the image (further along the road) to determine where the lane lines go.
+Output: left and right lane line pixels positions.
+```
+When we know the fitting result of previous frame, we can start from the line of previous step. 
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+The algorithm is implemented in the Lane class in code cell 31 of the IPython notebook in the function _curvate_radius().
 
+It basically fits the left and right curve with the polyfit function of OpenCV. After that these are converted into radian degrees and weighted half-half.
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+This step is as well done in the Lane class with the function fill_lanes().
+
+Here, some points of the calculated 2nd order fit are extracted and printed into the picture to fill the space between right and left lane.
+
+Moreover, the curvature and distance are put into the picture.
+
+Here is an example of my result on a test image:
+
 
 ![alt text][image6]
 
@@ -98,7 +111,7 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [https://github.com/ywzcode/UDACITY-self-driving-car-ND/blob/master/CarND-Advanced-Lane-Lines/project_video.mp4](./project_video.mp4)
 
 ---
 
