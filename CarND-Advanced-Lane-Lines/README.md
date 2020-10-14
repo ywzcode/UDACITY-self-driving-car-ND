@@ -20,9 +20,9 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./output_images/chessboard_undistort.png "Undistorted"
-[image2]: ./output_images/distortion-corrected.jpg "Road Transformed"
-[image3]: ./output_images/bird_eye_example.jpg "Binary Example"
-[image4]: ./output_images/example.jpg "Warp Example"
+[image2]: ./output_images/distortion-corrected.png "Road Transformed"
+[image3]: ./output_images/segment.png "Binary Example"
+[image4]: ./output_images/bird_eye_example.png "Warp Example"
 [image5]: ./output_images/color_fit_lines.jpg "Fit Visual"
 [image6]: ./output_images/example_output.jpg "Output"
 [video1]: ./project_video.mp4 "Video"
@@ -52,35 +52,25 @@ To demonstrate this step, I will describe how I apply the distortion correction 
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+I used a combination of color and gradient thresholds to generate a binary image at cell 8-10 located in "Advanced_Lane_Finding_Project.ipynb". In this step, thresholding for s channle of HSL color space is used. Also, I threshold the gradients with respect to x and y directions and the gradient magnitude. Here's an example of my output for this step.  (note: this is not actually from one of the test images)
 
 ![alt text][image3]
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+In cell 11-12 in Advanced_Lane_Finding_Project.ipynb, I define the perspective transform. The src and dst points are used to estimate Perspective Transformation. The `get_perspective_img()` function takes as inputs an image (`img`), as well as estimated transformation matrix `M`.  I chose the hardcode the source and destination points in the following manner:
 
 ```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
+src = np.float32([(585, 460),
+                  (695, 460), 
+                  (203, 720), 
+                  (1127, 720)])
+
+dst = np.float32([(320, 0),
+                  (960, 0), 
+                  (320, 720), 
+                  (960, 720)])
 ```
-
-This resulted in the following source and destination points:
-
-| Source        | Destination   | 
-|:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
