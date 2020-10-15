@@ -89,19 +89,14 @@ When we know the fitting result of previous frame, we can start from the line of
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-The algorithm is implemented in the Lane class in code cell 31 of the IPython notebook in the function _curvate_radius().
+This part is implemented in the cell 16 of the IPython notebook. 
+Basically, we fit the left and right curve with 30/720 meters per pixel in y dimension and 3.7/700  meteres per pixel in x dimension, respectively. Then the radian degree is computed via the curvature equation. The two is averaged. 
 
-It basically fits the left and right curve with the polyfit function of OpenCV. After that these are converted into radian degrees and weighted half-half.
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-This step is as well done in the Lane class with the function fill_lanes().
-
-Here, some points of the calculated 2nd order fit are extracted and printed into the picture to fill the space between right and left lane.
-
-Moreover, the curvature and distance are put into the picture.
+This part is in cell 16 and 17 with LaneFinder conatining the function from drawing and computing curvature and ProcessImage defining the image processing pipeline.
 
 Here is an example of my result on a test image:
-
 
 ![alt text][image6]
 
@@ -119,4 +114,5 @@ Here's a [https://github.com/ywzcode/UDACITY-self-driving-car-ND/blob/master/Car
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+I tried to compute the average detected lanes of several previous frames, but it didn't work. 
+In challenge video, my pipeline works very bad. It probably requires more careful segmentation and cropping region of interest. Also, the information from previous frames can be used to make it more robust. Also, I think the current color segmentaion is based on the daytime and very obvious yellow and white feature, which is not always the case in challenge video. So, another way can be consider more general color segmentation situation. 
