@@ -16,8 +16,8 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/example1.jpg "Visualization"
-[image2]: ./examples/example_gray2.jpg "Grayscaling"
-[image3]: ./examples/accuracy_curve.jpg "Random Noise"
+[image2]: ./examples/example_gray2.png "Grayscaling"
+[image3]: ./examples/accuracy_curve.png "Random Noise"
 [image4]: ./examples/example_mysigns.png "Traffic Sign 1"
 [image5]: ./examples/example_mysigns_prediction.png "Traffic Sign 2"
 [image6]: ./examples/example_softmax.png "Traffic Sign 3"
@@ -68,7 +68,7 @@ As a last step, I normalized the image data because it is beneficial to normaliz
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 The code for this step is contained in the cell 10 of the IPython notebook.
-In this step, I employed the LeNet architecture. Also, some additional dropout layers are added to overcome overfitting on test set. The input I use is the gray scale image. 
+In this step, I employed the LeNet architecture. Also, some additional dropout and batch normalization layers are added to overcome overfitting on test set. The input I use is the gray scale image. 
 
 My final model consisted of the following layers:
 | Layer         		|     Description	        					| 
@@ -84,9 +84,11 @@ My final model consisted of the following layers:
 | Dropout | 0.5 keep prob |
 | Fully connected| Output = 120. |
 | RELU					|												|
+| Batch normalization					|												|
 | Dropout | 0.5 keep prob |
 | Fully connected| Output = 84. |
 | RELU					|												|
+| Batch normalization					|												|
 | Dropout | 0.5 keep prob |
 | Fully connected| Output = 43. |
 
