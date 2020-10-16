@@ -110,9 +110,11 @@ My final model results were:
 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
+
 My first version architecture is the original LeNet without dropout and batch normalization. Also, I used RGB image as the input at the begining. I choose this architecture since it is a simple but effective conv net. 
 
 * What were some problems with the initial architecture?
+
 I found that it works not as good as I expected on the test set. Overfitting problem exists. 
 
 * How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
@@ -120,9 +122,11 @@ I found that it works not as good as I expected on the test set. Overfitting pro
 I found the gray image works better. Also, the dropout and batch normalization can boost the performance on the test set. Typically these two tricks can alleviate the overfitting problem.
 
 * Which parameters were tuned? How were they adjusted and why?
+
 The learning rate was tuned. I tried the learning rate with 1e-4, 5e-4 and 1e-3, and 1e-3 works the best. The learning rate is significant in leanring-based problem. It should be suitable, otherwise the network cannot converge. 
 
 * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+
 I think the data normalization is important. By limiting the data to [-1, 1], it is better for the activation function and network backpropagation. Also, the convolution layer can learn the local spatial feature, thus it works well on this task. Dropout can alleviate the overfitting problem. 
 
 ### Test a Model on New Images
