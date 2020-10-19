@@ -1,6 +1,12 @@
 # Extended Kalman Filter Project Starter Code
 Self-Driving Car Engineer Nanodegree Program
 
+
+[//]: # (Image References)
+
+[image1]: ./result.png "result"
+
+
 In this project you will utilize a kalman filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. Passing the project requires obtaining RMSE values that are lower than the tolerance outlined in the project rubric. 
 
 This project involves the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases).
@@ -67,11 +73,6 @@ Here is the main protocol that main.cpp uses for uWebSocketIO in communicating w
 4. Run it: `./ExtendedKF `
 
 
-
 ## Result:
 Open the Simulator and click "Start":
-[//]: # (Image References)
-[image1]: ./result.png "result"
-
-
 ![alt text][image1]
