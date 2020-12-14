@@ -59,87 +59,114 @@ the path has processed since last time.
 
 ["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates. 
 
-## Details
+## Path Generation
+This part is in line 104 - 268 in main.cpp. The main idea is to first choose a lane action, and then generate a smooth path trajectory using cubic splines. Details of two parts are explained in the following. To make it easier, we use Frenet Coordinates s and d. 
+### Choose a lane and velocity
+We use ref_lane to indicate our lane. The value is from 0 - 2.
+If there is no car ahead, or the car is far from our car, then we just keep current lane and keep moving. To to this, we make "too_close" as fasle, and add a velocity .224 until 49.5.
 
-1. The car uses a perfect controller and will visit every (x,y) point it recieves in the list every .02 seconds. The units for the (x,y) points are in meters and the spacing of the points determines the speed of the car. The vector going from a point to the next point in the list dictates the angle of the car. Acceleration both in the tangential and normal directions is measured along with the jerk, the rate of change of total Acceleration. The (x,y) point paths that the planner recieves should not have a total acceleration that goes over 10 m/s^2, also the jerk should not go over 50 m/s^3. (NOTE: As this is BETA, these requirements might change. Also currently jerk is over a .02 second interval, it would probably be better to average total acceleration over 1 second and measure jerk from that.
+If there is car ahead and it is very close (distance in Frenet Coordinates s < 30), we check if we can turn left or right. To do this, we enumerate all cars from sensor_fusion data, and compute their distance to our car in Frenet Coordinates.
 
-2. There will be some latency between the simulator running and the path planner returning a path, with optimized code usually its not very long maybe just 1-3 time steps. During this delay the simulator will continue using points that it was last given, because of this its a good idea to store the last points you have used so you can have a smooth transition. previous_path_x, and previous_path_y can be helpful for this transition since they show the last points given to the simulator controller with the processed points already removed. You would either return a path that extends this previous path or make sure to create a new path that has a smooth transition with this last path.
+If the car is in the left of our car, and the distance is less than 30, we set turn_left as false, which means we cannot trun left.  If the car is in the right of our car, and the distance is less than 30, we set turn_right as false.
 
-## Tips
+If we are not in the 0 lane and can_left is ture, then --ref_lane.
 
-A really helpful resource for doing this project and creating smooth trajectories was using http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single hearder file is really easy to use.
+If we are not in the 2 lane and can_right is ture, then ++ref_lane.
 
----
+If it is too close, we also deduct the velocity with .224. 
 
-## Dependencies
+#### the structure of this part is shown as:
+```cpp
 
-* cmake >= 3.5
-  * All OSes: [click here for installation instructions](https://cmake.org/install/)
-* make >= 4.1
-  * Linux: make is installed by default on most Linux distros
-  * Mac: [install Xcode command line tools to get make](https://developer.apple.com/xcode/features/)
-  * Windows: [Click here for installation instructions](http://gnuwin32.sourceforge.net/packages/make.htm)
-* gcc/g++ >= 5.4
-  * Linux: gcc / g++ is installed by default on most Linux distros
-  * Mac: same deal as make - [install Xcode command line tools]((https://developer.apple.com/xcode/features/)
-  * Windows: recommend using [MinGW](http://www.mingw.org/)
-* [uWebSockets](https://github.com/uWebSockets/uWebSockets)
-  * Run either `install-mac.sh` or `install-ubuntu.sh`.
-  * If you install from source, checkout to commit `e94b6e1`, i.e.
-    ```
-    git clone https://github.com/uWebSockets/uWebSockets 
-    cd uWebSockets
-    git checkout e94b6e1
-    ```
+          for(int i = 0; i< sensor_fusion.size(); ++i)
+          {
+            float d = sensor_fusion[i][6];
+            double vx = sensor_fusion[i][3];
+            double vy = sensor_fusion[i][4];
+            double check_speed = sqrt(vx*vx + vy*vy);
+            double check_car_s = sensor_fusion[i][5];
 
-## Editor Settings
+            check_car_s += ((double)prev_size * 0.02 * check_speed);
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+            if(d<(2+4*ref_lane + 2) && d>(2+4*ref_lane-2))
+            {
+             if((check_car_s > car_s) && ((check_car_s - car_s)< 30))
+             {
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+                //ref_vel = 29.5;
+                too_close = true;
+                  // here we add some logic opeations for lane change to pass the car ahead
+                /**************************************/
+                for(int i = 0; i< sensor_fusion.size(); ++i)
+                {
+                  float d = sensor_fusion[i][6];
+                  double vx = sensor_fusion[i][3];
+                  double vy = sensor_fusion[i][4];
+                  double check_speed = sqrt(vx*vx + vy*vy);
+                  double check_car_s = sensor_fusion[i][5];
 
-## Code Style
+                  check_car_s += ((double)prev_size * 0.02 * check_speed);
+                  if(ref_lane> 0 && d < (2+4*(ref_lane-1)+2) && d > (2+4*(ref_lane-1)-2)) // left lane
+                  {
+                    if(car_s - check_car_s < 30 && car_s - check_car_s > -30)
+                    {
+                      can_left = false;
+                    }
+                  }
+                  if(ref_lane<2 && d < (2+4*(ref_lane+1)+2) && d > (2+4*(ref_lane+1)-2)) // left lane
+                  {
+                    if(car_s - check_car_s < 30 && car_s - check_car_s > -30)
+                    {
+                      can_right = false;
+                    }
+                  }
+                }
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+                /**************************************/
 
-## Project Instructions and Rubric
+                  if(ref_lane > 0 && can_left)
+                  {
+                    ref_lane -= 1;
+                  }
+                  else if(ref_lane < 2 && can_right)
+                  {
+                    ref_lane += 1;
+                  }
+                }
+              }              
+            }
+```
 
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+### Path generation part
 
+For this part, the basic idea is to use a set points and spline to interpolate a curve. TO make the curve smooth, we need to add some points from previous step and current location. Also, to plane a further trajectory, we add some points 30, 60, 90 ahead regarding s in Frenet Coordinates. 
+```cpp
+          vector<double> next_wp_0 = getXY(car_s+30, (2+4*ref_lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          vector<double> next_wp_1 = getXY(car_s+60, (2+4*ref_lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          vector<double> next_wp_2 = getXY(car_s+90, (2+4*ref_lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+```
+Then, using these points, we do a cubic spline interpolation. Then we can make a path planning:
+```cpp
+          for(int i = 0; i <= 50-previous_path_x.size(); ++i){
+            double N = target_dist / (0.02 * ref_vel / 2.24) ;
+          	double x_point = x_add_on+(target_x)/N;
+            //std::cout << i << std::endl;
+            double y_point = s(x_point);
+            //std::cout << i << "\t"<< y_point << std::endl;
+            
+            x_add_on = x_point;
+            double x_ref = x_point;
+            double y_ref = y_point;
+            
+          	x_point = (x_ref * cos(ref_yaw) - y_ref * sin(ref_yaw));
+            y_point = (x_ref * sin(ref_yaw) + y_ref * cos(ref_yaw));
 
-## Call for IDE Profiles Pull Requests
+            x_point += ref_x;
+            y_point += ref_y;
+            
+            next_x_vals.push_back(x_point);
+            next_y_vals.push_back(y_point);            
+          }
+```
 
-Help your fellow students!
-
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to ensure
-that students don't feel pressured to use one IDE or another.
-
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
-
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
-
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
-
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
-
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
 
