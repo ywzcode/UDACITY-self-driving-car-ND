@@ -76,7 +76,7 @@ If we are not in the 2 lane and can_right is ture, then ++ref_lane.
 If it is too close, we also deduct the velocity with .224. 
 
 #### the structure of this part is shown as:
-'''cpp
+```cpp
 
           for(int i = 0; i< sensor_fusion.size(); ++i)
           {
@@ -135,5 +135,5 @@ If it is too close, we also deduct the velocity with .224.
                 }
               }              
             }
-'''
+```
 
