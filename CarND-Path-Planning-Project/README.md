@@ -75,5 +75,65 @@ If we are not in the 2 lane and can_right is ture, then ++ref_lane.
 
 If it is too close, we also deduct the velocity with .224. 
 
+#### the structure of this part is shown as:
+'''cpp
 
+          for(int i = 0; i< sensor_fusion.size(); ++i)
+          {
+            float d = sensor_fusion[i][6];
+            double vx = sensor_fusion[i][3];
+            double vy = sensor_fusion[i][4];
+            double check_speed = sqrt(vx*vx + vy*vy);
+            double check_car_s = sensor_fusion[i][5];
+
+            check_car_s += ((double)prev_size * 0.02 * check_speed);
+
+            if(d<(2+4*ref_lane + 2) && d>(2+4*ref_lane-2))
+            {
+             if((check_car_s > car_s) && ((check_car_s - car_s)< 30))
+             {
+
+                //ref_vel = 29.5;
+                too_close = true;
+                  // here we add some logic opeations for lane change to pass the car ahead
+                /**************************************/
+                for(int i = 0; i< sensor_fusion.size(); ++i)
+                {
+                  float d = sensor_fusion[i][6];
+                  double vx = sensor_fusion[i][3];
+                  double vy = sensor_fusion[i][4];
+                  double check_speed = sqrt(vx*vx + vy*vy);
+                  double check_car_s = sensor_fusion[i][5];
+
+                  check_car_s += ((double)prev_size * 0.02 * check_speed);
+                  if(ref_lane> 0 && d < (2+4*(ref_lane-1)+2) && d > (2+4*(ref_lane-1)-2)) // left lane
+                  {
+                    if(car_s - check_car_s < 30 && car_s - check_car_s > -30)
+                    {
+                      can_left = false;
+                    }
+                  }
+                  if(ref_lane<2 && d < (2+4*(ref_lane+1)+2) && d > (2+4*(ref_lane+1)-2)) // left lane
+                  {
+                    if(car_s - check_car_s < 30 && car_s - check_car_s > -30)
+                    {
+                      can_right = false;
+                    }
+                  }
+                }
+
+                /**************************************/
+
+                  if(ref_lane > 0 && can_left)
+                  {
+                    ref_lane -= 1;
+                  }
+                  else if(ref_lane < 2 && can_right)
+                  {
+                    ref_lane += 1;
+                  }
+                }
+              }              
+            }
+'''
 
