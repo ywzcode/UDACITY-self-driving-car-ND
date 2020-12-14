@@ -137,3 +137,36 @@ If it is too close, we also deduct the velocity with .224.
             }
 ```
 
+### Path generation part
+
+For this part, the basic idea is to use a set points and spline to interpolate a curve. TO make the curve smooth, we need to add some points from previous step and current location. Also, to plane a further trajectory, we add some points 30, 60, 90 ahead regarding s in Frenet Coordinates. 
+```cpp
+          vector<double> next_wp_0 = getXY(car_s+30, (2+4*ref_lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          vector<double> next_wp_1 = getXY(car_s+60, (2+4*ref_lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          vector<double> next_wp_2 = getXY(car_s+90, (2+4*ref_lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+```
+Then, using these points, we do a cubic spline interpolation. Then we can make a path planning:
+```cpp
+          for(int i = 0; i <= 50-previous_path_x.size(); ++i){
+            double N = target_dist / (0.02 * ref_vel / 2.24) ;
+          	double x_point = x_add_on+(target_x)/N;
+            //std::cout << i << std::endl;
+            double y_point = s(x_point);
+            //std::cout << i << "\t"<< y_point << std::endl;
+            
+            x_add_on = x_point;
+            double x_ref = x_point;
+            double y_ref = y_point;
+            
+          	x_point = (x_ref * cos(ref_yaw) - y_ref * sin(ref_yaw));
+            y_point = (x_ref * sin(ref_yaw) + y_ref * cos(ref_yaw));
+
+            x_point += ref_x;
+            y_point += ref_y;
+            
+            next_x_vals.push_back(x_point);
+            next_y_vals.push_back(y_point);            
+          }
+```
+
+
